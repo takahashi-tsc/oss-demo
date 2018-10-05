@@ -3,8 +3,8 @@
 unset OS_USERNAME OS_PASSWORD
 source ~/overcloudrc.v3
 
-openstack server list -c ID -f value | xargs openstack server delete | true
-openstack floating ip list -c ID -f value | xargs openstack floating ip delete | true
+openstack server list -c ID -f value | xargs openstack server delete || true
+openstack floating ip list -c ID -f value | xargs openstack floating ip delete || true
 
 openstack server create --image centos-image --flavor m1.test --key-name test-keypair --network internal --min 4 --max 4 testvm
 
