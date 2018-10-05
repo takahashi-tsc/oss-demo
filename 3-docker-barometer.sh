@@ -12,4 +12,4 @@ ssh -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHo
  systemctl status docker 
 
 
-echo "=====$0 end"=====
+echo "=====$0 end====="

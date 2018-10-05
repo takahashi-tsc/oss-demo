@@ -35,4 +35,4 @@ openstack router add subnet router1 internal-subnet | true
 
 osc keypair create --public-key ~/.ssh/id_rsa.pub test-keypair
 
-echo "=====$0 end"=====
+echo "=====$0 end====="

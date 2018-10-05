@@ -16,4 +16,4 @@ do
 done
 
 
-echo "=====$0 end"=====
+echo "=====$0 end====="

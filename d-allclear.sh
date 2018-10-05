@@ -20,4 +20,4 @@ openstack flavor delete m1.test
 
 openstack image delete centos-image
 
-echo "=====$0 end"=====
+echo "=====$0 end====="
