@@ -9,6 +9,16 @@ function osc () {
   openstack $*
 }
 
+
+SECG_ID=$(openstack security group list -c ID -f value --project admin)
+openstack security group rule list -c ID -f value ${SECG_ID} | \
+ xargs openstack security group rule delete | true
+openstack security group rule create --egress --protocol icmp ${SECG_ID}
+openstack security group rule create --egress --protocol tcp ${SECG_ID}
+openstack security group rule create --ingress --protocol icmp ${SECG_ID}
+openstack security group rule create --ingress --protocol tcp --dst-port 22 ${SECG_ID}
+
+
 ls CentOS-7-x86_64-GenericCloud.qcow2 || \
  curl -O http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2
 
@@ -20,8 +30,8 @@ osc network create internal
 osc subnet create --subnet-range 10.1.1.0/24 --network internal --dns-nameserver 192.168.122.1 internal-subnet
 
 osc router create router1
-openstack router set router1 --external-gateway external
-openstack router add subnet router1 internal-subnet
+openstack router set router1 --external-gateway external | true
+openstack router add subnet router1 internal-subnet | true
 
 osc keypair create --public-key ~/.ssh/id_rsa.pub test-keypair
 
