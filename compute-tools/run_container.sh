@@ -1,5 +1,10 @@
 #!/bin/bash -xe
 
+# set password: begin
+OS_PASS=xxxx
+MQ_PASS=xxxx
+# set password: end
+
 CONFDIR=~/confdir
 mkdir -p ${CONFDIR}
 
@@ -24,6 +29,9 @@ sudo docker run -tid -p 6379:6379 --name barometer-redis redis
 
 mkdir -p ${CONFDIR}/dma-conf
 cp ../../src/dma/examples/config.toml ${CONFDIR}/dma-conf/
+
+sed -i "s/^amqp_password.*$/amqp_password = \"${MQ_PASS}\"/" ${CONFDIR}/dma-conf/config.toml
+sed -i "s/^os_password.*$/os_password = \"${OS_PASS}\"/" ${CONFDIR}/dma-conf/config.toml
 
 if sudo ls /root/.ssh/id_rsa.pub; then
   echo "ssh-key already exists."
