@@ -1,12 +1,11 @@
 #!/bin/bash -xe
 
-# set password: begin
-OS_PASS=xxxx
-MQ_PASS=xxxx
-# set password: end
+source $1
 
 CONFDIR=~/confdir
 mkdir -p ${CONFDIR}
+
+sudo systemctl restart docker
 
 sudo docker rm -f barometer-collectd barometer-redis server infofetch || true
 
@@ -36,7 +35,7 @@ sed -i "s/^os_password.*$/os_password = \"${OS_PASS}\"/" ${CONFDIR}/dma-conf/con
 if sudo ls /root/.ssh/id_rsa.pub; then
   echo "ssh-key already exists."
 else
-  sudo ssh-keygen -t rsa -N ""
+  sudo ssh-keygen -f /root/.ssh/id_rsa -t rsa -N ""
   sudo cp /root/.ssh/authorized_keys /root/.ssh/authorized_keys_org
   cat /root/.ssh/authorized_keys_org /root/.ssh/id_rsa.pub \
     > /root/.ssh/authorized_keys

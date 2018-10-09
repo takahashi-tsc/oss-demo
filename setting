@@ -1,0 +1,7 @@
+# Config for DMA Setting
+
+OS_PASS=xxxx
+MQ_PASS=xxxx
+
+COMPUTES="overcloud-novacompute-0 overcloud-novacompute-1"
+
