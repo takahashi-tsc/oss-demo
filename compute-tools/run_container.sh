@@ -36,9 +36,8 @@ if sudo ls /root/.ssh/id_rsa.pub; then
   echo "ssh-key already exists."
 else
   sudo ssh-keygen -f /root/.ssh/id_rsa -t rsa -N ""
-  sudo cp /root/.ssh/authorized_keys /root/.ssh/authorized_keys_org
-  cat /root/.ssh/authorized_keys_org /root/.ssh/id_rsa.pub \
-    > /root/.ssh/authorized_keys
+  sudo cp -p /root/.ssh/authorized_keys /root/.ssh/authorized_keys_org
+  sudo cat /root/.ssh/id_rsa.pub | sudo tee -a /root/.ssh/authorized_keys
 fi
 
 sudo docker run -tid --net=host --name server \
