@@ -1,0 +1,14 @@
+# for DMA Demo
+
+[Unit]
+Description=collectd container
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker start -a barometer-collectd
+ExecStop=/usr/bin/docker stop -t 2 barometer-collectd
+
+[Install]
+WantedBy=default.target

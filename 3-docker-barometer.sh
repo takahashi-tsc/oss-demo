@@ -14,10 +14,10 @@ do
   COMP_URI=$(getaddr ${host_n})
 
   scp -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null \
-   setting compute-tools/run_container.sh ${COMP_URI}:
+   compute-tools/run_container.sh compute-tools/collectd.service setting ${COMP_URI}:
 
   ssh -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null ${COMP_URI} \
-   ./run_container.sh ./setting
+   ./run_container.sh ./setting ./collectd.service
 done
 
 echo "=====$0 end====="
