@@ -5,8 +5,8 @@ source $1
 if sudo grep DMA /usr/lib/systemd/system/collectd.service; then
   echo "collectd.service is already edited."
 else
-  sudo mv /usr/lib/systemd/system/collectd.service /usr/lib/systemd/system/collectd.service_org
-  sudo cp $2 /usr/lib/systemd/system/collectd.service
+  sudo cp /usr/lib/systemd/system/collectd.service /usr/lib/systemd/system/collectd.service_org
+  sudo cp -f $2 /usr/lib/systemd/system/collectd.service
   sudo systemctl daemon-reload
 fi
 
