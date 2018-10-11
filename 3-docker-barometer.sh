@@ -14,10 +14,10 @@ do
   COMP_URI=$(getaddr ${host_n})
 
   scp -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null \
-   compute-tools/run_container.sh compute-tools/collectd.service setting ${COMP_URI}:
+   -r compute-tools setting ${COMP_URI}:
 
   ssh -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null ${COMP_URI} \
-   ./run_container.sh ./setting ./collectd.service
+   ./compute-tools/run_container.sh ./setting ./compute-tools/collectd.service ./compute-tools/influxdb.conf
 done
 
 echo "=====$0 end====="

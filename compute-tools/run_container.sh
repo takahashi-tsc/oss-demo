@@ -1,5 +1,10 @@
 #!/bin/bash -xe
 
+# Args: File path
+#  $1: setting
+#  $2: collectd.service
+#  $3: influxdb.conf
+
 source $1
 
 if sudo grep DMA /usr/lib/systemd/system/collectd.service; then
@@ -10,6 +15,8 @@ else
   sudo systemctl daemon-reload
 fi
 
+INFLUXDB_CONF=$(readlink -f $3)
+
 CONFDIR=~/confdir
 BINDIR=~/bindir
 mkdir -p ${CONFDIR} ${BINDIR}
@@ -17,10 +24,14 @@ mkdir -p ${CONFDIR} ${BINDIR}
 
 sudo systemctl restart docker
 
-sudo docker rm -f barometer-collectd barometer-redis server infofetch || true
+sudo docker rm -f barometer-collectd barometer-redis server infofetch influxdb || true
 
+
+# Start redis
 sudo docker run -tid -p 6379:6379 --name barometer-redis redis
 
+
+# Start collectd
 
 sudo docker pull opnfv/barometer-collectd
 
@@ -35,18 +46,19 @@ sudo docker stop barometer-collectd
 sudo systemctl restart collectd
 
 
+# Start DMA
+
 cd ~
 ls barometer || git clone https://gerrit.opnfv.org/gerrit/barometer
 cd barometer/docker/barometer-dma
 sudo docker build -t opnfv/barometer-dma --build-arg http_proxy=`echo $http_proxy` \
   --build-arg https_proxy=`echo $https_proxy` -f Dockerfile .
 
-
 mkdir -p ${CONFDIR}/dma-conf
-cp ../../src/dma/examples/config.toml ${CONFDIR}/dma-conf/
+sudo cp -f ../../src/dma/examples/config.toml ${CONFDIR}/dma-conf/
 
-sed -i "s/^amqp_password.*$/amqp_password = \"${MQ_PASS}\"/" ${CONFDIR}/dma-conf/config.toml
-sed -i "s/^os_password.*$/os_password = \"${OS_PASS}\"/" ${CONFDIR}/dma-conf/config.toml
+sudo sed -i "s/^amqp_password.*$/amqp_password = \"${MQ_PASS}\"/" ${CONFDIR}/dma-conf/config.toml
+sudo sed -i "s/^os_password.*$/os_password = \"${OS_PASS}\"/" ${CONFDIR}/dma-conf/config.toml
 
 if sudo ls /root/.ssh/id_rsa.pub; then
   echo "ssh-key already exists."
@@ -68,6 +80,23 @@ sudo docker run -tid --net=host --name infofetch \
   opnfv/barometer-dma /infofetch
 
 sudo docker cp infofetch:/threshold ./
-sudo mv threshold ${BINDIR}/
+sudo mv -f threshold ${BINDIR}/
+
+
+# Start influxdb
+
+mkdir -p ${CONFDIR}/influxdb/collectd
+sudo cp -f ${INFLUXDB_CONF} ${CONFDIR}/influxdb/influxdb.conf
+sudo docker cp barometer-collectd:/opt/collectd/share/collectd/types.db ./
+sudo mv -f types.db ${CONFDIR}/influxdb/collectd/
+
+sudo docker run -d --net=host --name influxdb \
+ -v ${CONFDIR}/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro \
+ -v ${CONFDIR}/influxdb/collectd:/usr/share/collectd \
+ influxdb -config /etc/influxdb/influxdb.conf
+
+sudo systemctl restart iptables
+sudo iptables -I INPUT 5 -p tcp -m multiport --dports 8086 -m state --state NEW -m comment --comment "influx" -j ACCEPT
+
 
 echo "=====$0 end====="
