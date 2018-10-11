@@ -40,7 +40,7 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
 
         content_len = int(self.headers.getheader('content-length', 0))
         post_body = self.rfile.read(content_len)
-        logging.info('[Request doby]\n' + post_body)
+        logging.info('[Request body]\n' + post_body)
 
 
 # Start the server.
