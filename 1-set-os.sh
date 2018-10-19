@@ -18,6 +18,7 @@ openstack security group rule create --egress --protocol tcp ${SECG_ID}
 openstack security group rule create --egress --protocol udp ${SECG_ID}
 openstack security group rule create --ingress --protocol icmp ${SECG_ID}
 openstack security group rule create --ingress --protocol tcp --dst-port 22 ${SECG_ID}
+openstack security group rule create --ingress --protocol udp --dst-port 5001 ${SECG_ID} # for iperf
 
 
 ls CentOS-7-x86_64-GenericCloud.qcow2 || \
