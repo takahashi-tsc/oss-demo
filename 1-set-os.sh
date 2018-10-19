@@ -15,6 +15,7 @@ openstack security group rule list -c ID -f value ${SECG_ID} | \
  xargs openstack security group rule delete || true
 openstack security group rule create --egress --protocol icmp ${SECG_ID}
 openstack security group rule create --egress --protocol tcp ${SECG_ID}
+openstack security group rule create --egress --protocol udp ${SECG_ID}
 openstack security group rule create --ingress --protocol icmp ${SECG_ID}
 openstack security group rule create --ingress --protocol tcp --dst-port 22 ${SECG_ID}
 
