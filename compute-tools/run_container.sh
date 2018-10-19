@@ -3,7 +3,6 @@
 # Args: File path
 #  $1: setting
 #  $2: collectd.service
-#  $3: influxdb.conf
 
 source $1
 
@@ -15,8 +14,6 @@ else
   sudo systemctl daemon-reload
 fi
 
-INFLUXDB_CONF=$(readlink -f $3)
-
 CONFDIR=~/confdir
 BINDIR=~/bindir
 mkdir -p ${CONFDIR} ${BINDIR}
@@ -25,6 +22,7 @@ mkdir -p ${CONFDIR} ${BINDIR}
 sudo systemctl restart docker
 
 sudo docker rm -f barometer-collectd barometer-redis server infofetch influxdb || true
+pkill -f grafana-redis-proxy || true
 
 
 # Start redis
@@ -83,20 +81,15 @@ sudo docker cp infofetch:/threshold ./
 sudo mv -f threshold ${BINDIR}/
 
 
-# Start influxdb
-
-mkdir -p ${CONFDIR}/influxdb/collectd
-sudo cp -f ${INFLUXDB_CONF} ${CONFDIR}/influxdb/influxdb.conf
-sudo docker cp barometer-collectd:/opt/collectd/share/collectd/types.db ./
-sudo mv -f types.db ${CONFDIR}/influxdb/collectd/
-
-sudo docker run -d --net=host --name influxdb \
- -v ${CONFDIR}/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro \
- -v ${CONFDIR}/influxdb/collectd:/usr/share/collectd \
- influxdb -config /etc/influxdb/influxdb.conf
-
+# Import grafana-redis-proxy
 sudo systemctl restart iptables
-sudo iptables -I INPUT 5 -p tcp -m multiport --dports 8086 -m state --state NEW -m comment --comment "influx" -j ACCEPT
+sudo iptables -I INPUT 5 -p tcp -m multiport --dports 8080 -m state --state NEW -m comment --comment "grafana-redis" -j ACCEPT
+
+cd ~
+sudo yum -y install golang
+go get github.com/s1061123/grafana-redis-proxy
+nohup ./go/bin/grafana-redis-proxy > grafana-redis-proxy.log 2> grafana-redis-proxy-err.log  < /dev/null &
+sleep 1
 
 
 echo "=====$0 end====="

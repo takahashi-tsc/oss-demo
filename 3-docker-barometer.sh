@@ -17,7 +17,7 @@ do
    -r compute-tools setting ${COMP_URI}:
 
   ssh -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null ${COMP_URI} \
-   ./compute-tools/run_container.sh ./setting ./compute-tools/collectd.service ./compute-tools/influxdb.conf
+   ./compute-tools/run_container.sh ./setting ./compute-tools/collectd.service
 done
 
 echo "=====$0 end====="
