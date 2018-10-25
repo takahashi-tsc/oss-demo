@@ -7,7 +7,7 @@ openstack server list -c ID -f value | xargs openstack server delete || true
 openstack floating ip list -c ID -f value | xargs openstack floating ip delete || true
 
 openstack server create --image centos-image --flavor m1.small --key-name test-keypair \
- --user-data vm-tools/setup.sh --network internal --min 2 --max 2 apl-vm
+ --user-data vm-tools/setup.sh --network internal --min 2 --max 2 app-vm
 
 while openstack server list | grep BUILD; do echo "Wait active..." ; done
 
