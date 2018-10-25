@@ -1,4 +1,4 @@
 
 export AMQP_HOST=$(. ~/stackrc ; openstack server show overcloud-controller-0 -c addresses -f value | sed -e 's/ctlplane=//')
-export AMQP_PASSWORD=$(sed -ne 's/MQ_PASS=//p' setting)
+export AMQP_PASSWORD=$(sed -ne 's/MQ_PASS=//p' ../setting)
 
