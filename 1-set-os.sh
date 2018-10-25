@@ -26,11 +26,12 @@ ls CentOS-7-x86_64-GenericCloud.qcow2 || \
 
 osc image create --disk-format qcow2 --file CentOS-7-x86_64-GenericCloud.qcow2 centos-image
 
-osc flavor create --ram 1024 --vcpus 1 m1.test
+osc flavor create --ram 1024 --vcpus 1 m1.small
 
 osc network create internal
 osc subnet create --subnet-range 10.1.1.0/24 --network internal \
- --dns-nameserver 8.8.8.8 --dns-nameserver 8.8.4.4 internal-subnet
+  --gateway 10.1.1.1 --dns-nameserver 8.8.8.8 --dns-nameserver 8.8.4.4 \
+ internal-subnet
 
 osc router create router1
 openstack router set router1 --external-gateway external || true

@@ -16,7 +16,7 @@ openstack router delete router1
 openstack subnet delete internal-subnet
 openstack network delete internal
 
-openstack flavor delete m1.test
+openstack flavor delete m1.small
 
 openstack image delete centos-image
 

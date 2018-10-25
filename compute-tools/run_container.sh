@@ -21,7 +21,7 @@ mkdir -p ${CONFDIR} ${BINDIR}
 
 sudo systemctl restart docker
 
-sudo docker rm -f barometer-collectd barometer-redis server infofetch influxdb || true
+sudo docker rm -f barometer-collectd barometer-redis server infofetch || true
 pkill -f grafana-redis-proxy || true
 
 
@@ -55,6 +55,7 @@ sudo docker build -t opnfv/barometer-dma --build-arg http_proxy=`echo $http_prox
 mkdir -p ${CONFDIR}/dma-conf
 sudo cp -f ../../src/dma/examples/config.toml ${CONFDIR}/dma-conf/
 
+sudo sed -i "s/^min.*$/min = 100000000/" ${CONFDIR}/dma-conf/config.toml
 sudo sed -i "s/^amqp_password.*$/amqp_password = \"${MQ_PASS}\"/" ${CONFDIR}/dma-conf/config.toml
 sudo sed -i "s/^os_password.*$/os_password = \"${OS_PASS}\"/" ${CONFDIR}/dma-conf/config.toml
 
